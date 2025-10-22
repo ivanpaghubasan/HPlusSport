@@ -19,9 +19,20 @@ namespace HPlusSport.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAllProducts([FromQuery] QueryParameters queryParams)
+        public async Task<ActionResult> GetAllProducts([FromQuery] ProductQueryParameters queryParams)
         {
             IQueryable<Product> products = _context.Products;
+
+            if (queryParams.MinPrice != null)
+            {
+                products = products.Where(p => p.Price >= queryParams.MinPrice.Value);
+            }
+
+            if (queryParams.MaxPrice != null)
+            {
+                products = products.Where(p => p.Price <= queryParams.MaxPrice.Value);
+            }
+
             products = products
                 .Skip(queryParams.Size * (queryParams.Page - 1))
                 .Take(queryParams.Size);
