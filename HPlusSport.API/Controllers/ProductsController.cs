@@ -19,10 +19,15 @@ namespace HPlusSport.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAllProducts()
+        public async Task<ActionResult> GetAllProducts([FromQuery] QueryParameters queryParams)
         {
-            var products = await _context.Products.ToArrayAsync();
-            return Ok(products);
+            IQueryable<Product> products = _context.Products;
+            products = products
+                .Skip(queryParams.Size * (queryParams.Page - 1))
+                .Take(queryParams.Size);
+
+            var paginatedProducts = await products.ToArrayAsync();
+            return Ok(paginatedProducts);
         }
 
         [HttpGet("{id}")]
