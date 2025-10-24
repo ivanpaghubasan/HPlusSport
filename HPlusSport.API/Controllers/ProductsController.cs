@@ -49,6 +49,16 @@ namespace HPlusSport.API.Controllers
                 );
             }
 
+            if (!string.IsNullOrEmpty(queryParams.SortBy))
+            {
+                if (typeof(Product).GetProperty(queryParams.SortBy) != null)
+                {
+                    products = products.OrderByCustom(
+                        queryParams.SortBy,
+                        queryParams.SortOrder);
+                }
+            }
+
             products = products
                 .Skip(queryParams.Size * (queryParams.Page - 1))
                 .Take(queryParams.Size);
