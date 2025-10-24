@@ -12,7 +12,10 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
-    options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new QueryStringApiVersionReader("api-version"), // ?api-version=2.0
+        new HeaderApiVersionReader("X-API-Version"), // X-API-Version: 2.0
+        new MediaTypeApiVersionReader("ver")); // Accept: application/json;ver=2.0
 }).AddApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";
